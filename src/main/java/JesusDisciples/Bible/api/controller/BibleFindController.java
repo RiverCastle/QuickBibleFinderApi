@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/{title}/{verseInfo}")
 public class BibleFindController {
-    4private final BibleFindServiceV2 bibleFindService;
+    private final BibleFindServiceV2 bibleFindService;
 
     @GetMapping
-    private BibleApiResult[] getBibleVerses(@PathVariable("title") String title,
+    private BibleApiResult[] getBibleVerses(@PathVariable("title") String engAbbr,
                                             @PathVariable("verseInfo") String verseInfo) {
         BibleFindReqDto bibleFindReqDto = new BibleFindReqDto();
-        bibleFindReqDto.setTitle(title);
+        bibleFindReqDto.setEngAbbr(engAbbr);
         bibleFindReqDto.setVerseInfo(verseInfo);
 
         return bibleFindService.getThisVerses(bibleFindReqDto);
