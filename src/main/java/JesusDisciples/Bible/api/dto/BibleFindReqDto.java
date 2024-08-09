@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class BibleFindReqDto {
-    private String title;
+    private String engAbbr;
     private String verseInfo;
 }

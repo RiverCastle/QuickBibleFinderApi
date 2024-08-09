@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 public class BibleFindServiceV1 {
 
     public BibleApiResult[] getThisVerses(BibleFindReqDto bibleFindReqDto) {
-        String title = bibleFindReqDto.getTitle();
+        String title = bibleFindReqDto.getEngAbbr();
         String verseInfo = bibleFindReqDto.getVerseInfo();
         String url = "https://yesu.io/bible?lang=kor"
                 + "&doc=" + title
