@@ -1,7 +1,6 @@
 package JesusDisciples.Bible.api.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
 
 
 @Entity
@@ -11,7 +10,9 @@ public class Bible {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "book_eng")
-    private String bookTitle;
+    private String engTitle;
+    @Column(name = "book_kor")
+    private String korTitle;
     private Integer chapter;
     private Integer verse;
     private String content;
@@ -20,7 +21,32 @@ public class Bible {
     @Column(name = "abbr_kor")
     private String korAbbr;
 
+
+    public String getEngTitle() {
+        return engTitle;
+    }
+
+    public String getKorTitle() {
+        return korTitle;
+    }
+
+    public Integer getChapter() {
+        return chapter;
+    }
+
     public String getContent() {
         return content;
+    }
+
+    public String getEngAbbr() {
+        return engAbbr;
+    }
+
+    public String getKorAbbr() {
+        return korAbbr;
+    }
+
+    public Integer getVerse() {
+        return verse;
     }
 }

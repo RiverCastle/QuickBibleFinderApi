@@ -4,15 +4,20 @@ import lombok.Data;
 
 @Data
 public class BibleApiResult {
-    private String title;
+    private String korAbbr;
+    private String engAbbr;
+
+    private String korTitle;
+    private String engTitle;
+
     private String chapter;
     private String verse;
-    private String message;
+    private String content;
 
-    public BibleApiResult(String title, String chapter, String verse, String message) {
-        this.title = title;
+    public BibleApiResult(String engAbbr, String chapter, String verse, String content) {
+        this.engAbbr = engAbbr;
         this.chapter = chapter;
         this.verse = verse;
-        this.message = message;
+        this.content = content;
     }
 }
