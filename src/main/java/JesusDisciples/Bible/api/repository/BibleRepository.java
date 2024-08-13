@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BibleRepository extends JpaRepository<Bible, Long> {
+    Bible findByEngAbbrAndChapterAndVerse(String engAbbr, int chapter, int verse);
 }
