@@ -18,7 +18,7 @@ public class BibleFindServiceV1 {
         // url format = https://yesu.io/bible?lang=kor&doc=제목&start=시작장:시작절&end=끝장:끝절
 
         BibleApiResult[] result =  new RestTemplate().getForObject(url, BibleApiResult[].class);
-        result[0].setTitle(title);
+        result[0].setEngTitle(title);
         return result;
 
     }
