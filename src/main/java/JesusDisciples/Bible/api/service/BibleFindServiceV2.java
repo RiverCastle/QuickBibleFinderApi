@@ -21,7 +21,7 @@ public class BibleFindServiceV2 {
         Bible entity = bibleRepository.findByEngAbbrAndChapterAndVerse(engAbbr, chapter, targetVerse);
         System.out.println("entity = " + entity.toString());
         BibleApiResult[] result = new BibleApiResult[1];
-        result[0] = new BibleApiResult(engAbbr, verseInfo[0], verseInfo[1], entity.getContent());
+        result[0] = BibleApiResult.fromEntity(entity);
         return result;
     }
 }
