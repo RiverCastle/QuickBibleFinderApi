@@ -1,5 +1,6 @@
 package JesusDisciples.Bible.api.service;
 
+import JesusDisciples.Bible.aop.methodExecutionTimeLog.MethodExecutionTimeLogTarget;
 import JesusDisciples.Bible.api.dto.BibleApiResult;
 import JesusDisciples.Bible.api.dto.BibleFindReqDto;
 import JesusDisciples.Bible.api.entity.Bible;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 public class BibleFindServiceV2 {
 
     private final BibleRepository bibleRepository;
+
+    @MethodExecutionTimeLogTarget
     public BibleApiResult[] getThisVerses(BibleFindReqDto bibleFindReqDto) {
         String engAbbr = bibleFindReqDto.getEngAbbr();
         String[] verseInfo = bibleFindReqDto.getVerseInfo().split(":");
