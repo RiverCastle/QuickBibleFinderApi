@@ -33,51 +33,33 @@ jobs:
         with: 
           arguments: clean build -x test
 
-      - name: SCP를 사용하여 JAR 파일 전송
-        env:
-          PEM_KEY: ${{ secrets.PEM_KEY }}  # PEM 키를 GitHub Secrets에 저장
-          REMOTE_SERVER: ${{ secrets.REMOTE_SERVER }} # REMOTE 서버를 GitHub Secrets에 저장
-          JAR_FILE_PATH: ${{ secrets.JAR_FILE_PATH }}
-          
-        run: |
-          echo "$PEM_KEY" > private_key.pem
-          echo "$REMOTE_SERVER" > remote_server
-          echo "$JAR_FILE_PATH" > jar_file_path
-          chmod 600 private_key.pem
-          scp -i private_key.pem -o StrictHostKeyChecking=no -r build/libs/*.jar remote_server:jar_file_path
+      # SCP로 서버로 전송
+      - name: SCP transfer
+        uses: appleboy/scp-action@master
+        with:
+          username: ${{ secrets.SSH_USER }}
+          host: ${{ secrets.REMOTE_SERVER }}
+          key: ${{ secrets.PEM_KEY }}
+          rm: true
+          source: "./build/libs/*.jar"
+          target: ${{ secrets.JAR_FILE_PATH }}
+          ## 작업에 사용했던 dist 디렉토리를 경로상에서 제거
+          strip_components: 1
 
+    
       - name: 원격 서버에서 빌드 결과물 실행
         env:
           PEM_KEY: ${{ secrets.PEM_KEY }}  # PEM 키를 GitHub Secrets에 저장
-          REMOTE_SERVER: ${{ secrets.REMOTE_SERVER }} # REMOTE 서버를 GitHub Secrets에 저장
+          username: ${{ secrets.SSH_USER }}
+          host: ${{ secrets.REMOTE_SERVER }}
+          key: ${{ secrets.PEM_KEY }}
           
         run: |
-          echo "$PEM_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $REMOTE_SERVER 'java -jar /home/ubuntu/app/your-application.jar && echo "successfully running" || echo "failed to run"'
-
-      - name: JAR 파일 이동 및 이름 변경
-        env:
-          PEM_KEY: ${{ secrets.PEM_KEY }}  # PEM 키를 GitHub Secrets에 저장
-          REMOTE_SERVER: ${{ secrets.REMOTE_SERVER }} # REMOTE 서버를 GitHub Secrets에 저장
-          JAR_SAVE_PATH: ${{ secrets.JAR_SAVE_PATH }}
-          
-        run: |
-          echo "$PEM_KEY" > private_key.pem
-          echo "$JAR_SAVE_PATH" > jar_save_path
-          chmod 600 private_key.pem
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $REMOTE_SERVER << 'EOF'
-          # 현재 날짜와 시간 가져오기
-          current_time=$(date +"%Y%m%d_%H%M%S")
-
-          # 기존 JAR 파일 경로
-          old_jar_path=$(ls *.jar 2>/dev/null)
-          # 새로운 파일 이름
-          new_jar_name="${old_jar_path%.jar}_$current_time.jar"
-          # 새로운 파일 경로
-          new_jar_path="jar_save_path$new_jar_name"
-
-          # 파일 이동 및 이름 변경
-          mv "$old_jar_path" "$new_jar_path"
-          echo "파일이 $new_jar_path 으로 이동되었습니다."
-          EOF
+          ssh -i private_key.pem "$SSH_USER@$REMOTE_SERVER" "
+            JAR_FILE=\$(find $JAR_FILE_PATH -name '*.jar' | head -n 1) &&
+            if [ -n \"\$JAR_FILE\" ]; then
+              nohup java -jar \"\$JAR_FILE\" > output.log 2>&1 &
+            else
+              echo 'No JAR file found!'
+            fi
+          "
